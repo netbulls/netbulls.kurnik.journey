@@ -4,8 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "bun run scripts/build-timeline.ts",
-    "build:timeline": "bun run scripts/build-timeline.ts"
+    "version-inject": "bun run scripts/version-inject.ts",
+    "build:timeline": "bun run scripts/build-timeline.ts",
+    "build": "bun run version-inject && bun run build:timeline",
+    "snapshot": "git add -A && git commit -m \"snapshot: $(git describe --tags --always)\" && echo 'Snapshot committed'",
+    "release": "bash scripts/release.sh"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0"
