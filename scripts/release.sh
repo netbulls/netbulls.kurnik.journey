@@ -141,6 +141,10 @@ if [ -f "$X_SECRETS" ]; then
   export X_PERSONAL_API_SECRET=$(read_secret "$X_SECRETS" "@erace (personal)" "Secret Key")
   export X_PERSONAL_ACCESS_TOKEN=$(read_secret "$X_SECRETS" "@erace (personal)" "Access Token (X_PERSONAL_ACCESS_TOKEN)")
   export X_PERSONAL_ACCESS_SECRET=$(read_secret "$X_SECRETS" "@erace (personal)" "Access Token Secret (X_PERSONAL_ACCESS_SECRET)")
+  export X_KURNIK_API_KEY=$(read_secret "$X_SECRETS" "@kurnik_ai" "Consumer Key")
+  export X_KURNIK_API_SECRET=$(read_secret "$X_SECRETS" "@kurnik_ai" "Secret Key")
+  export X_KURNIK_ACCESS_TOKEN=$(read_secret "$X_SECRETS" "@kurnik_ai" "Access Token (X_KURNIK_ACCESS_TOKEN)")
+  export X_KURNIK_ACCESS_SECRET=$(read_secret "$X_SECRETS" "@kurnik_ai" "Access Token Secret (X_KURNIK_ACCESS_SECRET)")
   bun run scripts/draft-tweet.ts draft "$VERSION" "${NOTES:-Release v${VERSION}}" || true
 else
   echo "X credentials not found — skipping tweet. Run './scripts/secrets.sh decrypt' first."

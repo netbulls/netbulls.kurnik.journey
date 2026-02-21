@@ -2,14 +2,17 @@
 /**
  * Draft and post milestone tweets for Kurnik.
  *
- * Two modes:
- *   bun run tweet draft "0.1.0" "notes"     — drafts via Claude, prints to stdout, exits 2
- *   bun run tweet post  "0.1.0" "tweet text" — posts to X, no prompts
+ * Three modes:
+ *   bun run tweet draft "0.1.0" "notes"                        — drafts via Claude, prints to stdout, exits 2
+ *   bun run tweet post  "0.1.0" "tweet text"                   — posts from @erace, no prompts
+ *   bun run tweet quote "https://x.com/.../status/123" "text"  — quote-tweets from @kurnik_ai
  *
  * Requires:
  *   ANTHROPIC_API_KEY — for drafting
  *   X_PERSONAL_API_KEY, X_PERSONAL_API_SECRET,
- *   X_PERSONAL_ACCESS_TOKEN, X_PERSONAL_ACCESS_SECRET — for posting
+ *   X_PERSONAL_ACCESS_TOKEN, X_PERSONAL_ACCESS_SECRET — for posting from @erace
+ *   X_KURNIK_API_KEY, X_KURNIK_API_SECRET,
+ *   X_KURNIK_ACCESS_TOKEN, X_KURNIK_ACCESS_SECRET — for posting from @kurnik_ai
  */
 
 import Anthropic from "@anthropic-ai/sdk";
@@ -65,21 +68,48 @@ function generateOAuthSignature(
   return createHmac("sha1", signingKey).update(baseString).digest("base64");
 }
 
-async function postTweet(text: string): Promise<{ id: string; url: string }> {
-  const apiKey = requireEnv("X_PERSONAL_API_KEY");
-  const apiSecret = requireEnv("X_PERSONAL_API_SECRET");
-  const accessToken = requireEnv("X_PERSONAL_ACCESS_TOKEN");
-  const accessSecret = requireEnv("X_PERSONAL_ACCESS_SECRET");
+interface XCredentials {
+  apiKey: string;
+  apiSecret: string;
+  accessToken: string;
+  accessSecret: string;
+  handle: string;
+}
 
+function getPersonalCredentials(): XCredentials {
+  return {
+    apiKey: requireEnv("X_PERSONAL_API_KEY"),
+    apiSecret: requireEnv("X_PERSONAL_API_SECRET"),
+    accessToken: requireEnv("X_PERSONAL_ACCESS_TOKEN"),
+    accessSecret: requireEnv("X_PERSONAL_ACCESS_SECRET"),
+    handle: PERSONAL_HANDLE,
+  };
+}
+
+function getKurnikCredentials(): XCredentials {
+  return {
+    apiKey: requireEnv("X_KURNIK_API_KEY"),
+    apiSecret: requireEnv("X_KURNIK_API_SECRET"),
+    accessToken: requireEnv("X_KURNIK_ACCESS_TOKEN"),
+    accessSecret: requireEnv("X_KURNIK_ACCESS_SECRET"),
+    handle: KURNIK_HANDLE,
+  };
+}
+
+async function postTweet(
+  text: string,
+  creds: XCredentials,
+  quoteTweetId?: string
+): Promise<{ id: string; url: string }> {
   const url = "https://api.x.com/2/tweets";
   const method = "POST";
 
   const oauthParams: Record<string, string> = {
-    oauth_consumer_key: apiKey,
+    oauth_consumer_key: creds.apiKey,
     oauth_nonce: randomBytes(16).toString("hex"),
     oauth_signature_method: "HMAC-SHA1",
     oauth_timestamp: Math.floor(Date.now() / 1000).toString(),
-    oauth_token: accessToken,
+    oauth_token: creds.accessToken,
     oauth_version: "1.0",
   };
 
@@ -87,8 +117,8 @@ async function postTweet(text: string): Promise<{ id: string; url: string }> {
     method,
     url,
     oauthParams,
-    apiSecret,
-    accessSecret
+    creds.apiSecret,
+    creds.accessSecret
   );
   oauthParams.oauth_signature = signature;
 
@@ -99,13 +129,18 @@ async function postTweet(text: string): Promise<{ id: string; url: string }> {
       .map((k) => `${percentEncode(k)}="${percentEncode(oauthParams[k])}"`)
       .join(", ");
 
+  const body: Record<string, unknown> = { text };
+  if (quoteTweetId) {
+    body.quote_tweet_id = quoteTweetId;
+  }
+
   const res = await fetch(url, {
     method,
     headers: {
       Authorization: authHeader,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ text }),
+    body: JSON.stringify(body),
   });
 
   if (!res.ok) {
@@ -117,7 +152,7 @@ async function postTweet(text: string): Promise<{ id: string; url: string }> {
   const tweetId = data.data.id;
   return {
     id: tweetId,
-    url: `https://x.com/${PERSONAL_HANDLE}/status/${tweetId}`,
+    url: `https://x.com/${creds.handle}/status/${tweetId}`,
   };
 }
 
@@ -223,12 +258,26 @@ async function cmdDraft(version: string, notes: string) {
 async function cmdPost(version: string, text: string) {
   console.log("\n📤 Posting to @" + PERSONAL_HANDLE + "...\n");
 
-  const result = await postTweet(text);
+  const result = await postTweet(text, getPersonalCredentials());
   console.log(`✅ Posted! ${result.url}\n`);
   console.log(`Now quote-tweet from @${KURNIK_HANDLE}:`);
-  console.log(`  1. Log into @${KURNIK_HANDLE}`);
-  console.log(`  2. Quote: ${result.url}`);
-  console.log(`  3. Draft a product-focused reply\n`);
+  console.log(`  bun run tweet quote "${result.url}" "your quote text"\n`);
+}
+
+async function cmdQuote(tweetUrl: string, text: string) {
+  const tweetIdMatch = tweetUrl.match(/status\/(\d+)/);
+  if (!tweetIdMatch) {
+    console.error("❌ Invalid tweet URL — expected https://x.com/.../status/123456");
+    process.exit(1);
+  }
+  const quoteTweetId = tweetIdMatch[1];
+
+  console.log(`\n📤 Quote-tweeting from @${KURNIK_HANDLE}...\n`);
+  console.log(`  Quoting: ${tweetUrl}`);
+  console.log(`  Text: ${text}\n`);
+
+  const result = await postTweet(text, getKurnikCredentials(), quoteTweetId);
+  console.log(`✅ Posted! ${result.url}\n`);
 }
 
 // ── Main ──
@@ -257,10 +306,21 @@ async function main() {
     }
 
     await cmdPost(version, text);
+  } else if (mode === "quote") {
+    const tweetUrl = process.argv[3] || "";
+    const text = process.argv[4] || "";
+
+    if (!tweetUrl || !text) {
+      console.error('Usage: bun run tweet quote "https://x.com/.../status/123" "quote text"');
+      process.exit(1);
+    }
+
+    await cmdQuote(tweetUrl, text);
   } else {
     console.error("Usage:");
     console.error('  bun run tweet draft "0.1.0" "release notes"');
     console.error('  bun run tweet post  "0.1.0" "exact tweet text"');
+    console.error('  bun run tweet quote "https://x.com/.../status/123" "quote text"');
     process.exit(1);
   }
 }
