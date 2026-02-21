@@ -75,7 +75,9 @@
   footer a { color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
   footer a:hover { color: var(--accent-warm); }
   .footer-links { display: flex; gap: 1.5rem; font-size: 0.8rem; }
-  .footer-version { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--text-muted); opacity: 0.5; }
+  .footer-version { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; opacity: 0.5; }
+  .footer-version a { color: var(--text-muted); border-bottom: none; }
+  .footer-version a:hover { color: var(--accent-warm); }
   @media (max-width: 640px) { .container { padding: 0 1.25rem; } .chapter { padding: 1.25rem 1.5rem; } .chapter::after { display: none; } .chapter-desc { padding-left: 0; } .chapter-status { margin-left: 0; } .chapter-header { flex-direction: column; align-items: flex-start; gap: 0.25rem; } .metaphor { flex-wrap: wrap; gap: 0.5rem; } .m-step { min-width: 80px; } footer { flex-direction: column; gap: 1rem; text-align: center; } }
 </style>
 </head>
@@ -137,9 +139,10 @@
     <p>Built by <a href="https://github.com/netbulls" target="_blank">netbulls</a> · <strong>kurnik.ai</strong></p>
   </div>
   <footer>
-    <p>© 2026 Kurnik · netbulls <span class="footer-version"><!-- VERSION --></span></p>
+    <p>© 2026 Kurnik · netbulls <span class="footer-version"><a href="versions/"><!-- VERSION --></a></span></p>
     <div class="footer-links">
       <a href="timeline.html">Timeline</a>
+      <a href="versions/">Versions</a>
       <a href="https://github.com/netbulls/netbulls.kurnik.journey" target="_blank">Source</a>
       <a href="https://kurnik.ai" target="_blank">kurnik.ai</a>
     </div>
