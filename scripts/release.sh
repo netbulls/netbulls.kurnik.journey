@@ -123,10 +123,27 @@ fi
 # --- Tweet milestone ---
 echo ""
 echo "==> Tweet milestone..."
-if [ -n "${X_PERSONAL_API_KEY:-}" ]; then
+SECRETS_DIR="$PROJECT_DIR/secrets"
+X_SECRETS="$SECRETS_DIR/x-api.md"
+
+read_secret() {
+  local file="$1" section="$2" field="$3"
+  sed -n "/^## ${section}/,/^## /p" "$file" | grep "^- ${field}:" | head -1 | sed "s/^- ${field}: //"
+}
+
+if [ ! -f "$X_SECRETS" ]; then
+  echo "Decrypting X credentials..."
+  "$SCRIPT_DIR/secrets.sh" decrypt 2>/dev/null || true
+fi
+
+if [ -f "$X_SECRETS" ]; then
+  export X_PERSONAL_API_KEY=$(read_secret "$X_SECRETS" "@erace (personal)" "Consumer Key")
+  export X_PERSONAL_API_SECRET=$(read_secret "$X_SECRETS" "@erace (personal)" "Secret Key")
+  export X_PERSONAL_ACCESS_TOKEN=$(read_secret "$X_SECRETS" "@erace (personal)" "Access Token (X_PERSONAL_ACCESS_TOKEN)")
+  export X_PERSONAL_ACCESS_SECRET=$(read_secret "$X_SECRETS" "@erace (personal)" "Access Token Secret (X_PERSONAL_ACCESS_SECRET)")
   bun run scripts/draft-tweet.ts "$VERSION" "${NOTES:-Release v${VERSION}}" || echo "Tweet skipped or failed"
 else
-  echo "X API keys not set — skipping tweet. Run 'bun run tweet' manually."
+  echo "X credentials not found — skipping tweet. Run './scripts/secrets.sh decrypt' first."
 fi
 
 echo ""
