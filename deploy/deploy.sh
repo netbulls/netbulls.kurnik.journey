@@ -9,8 +9,8 @@ REMOTE_BASE="/opt/kurnik-journey"
 
 echo "=== Deploying kurnik-journey ==="
 
-# Create remote directory
-ssh "$SSH_HOST" "mkdir -p $REMOTE_BASE/prod $REMOTE_BASE/site"
+# Create remote directory (sudo for /opt/, then chown to deploy)
+ssh "$SSH_HOST" "sudo mkdir -p $REMOTE_BASE/prod $REMOTE_BASE/site && sudo chown -R deploy:deploy $REMOTE_BASE"
 
 # Sync site files
 rsync -avz --delete \
