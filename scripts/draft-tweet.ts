@@ -1,17 +1,10 @@
 #!/usr/bin/env bun
 /**
- * Draft and post a milestone tweet for Kurnik.
+ * Draft and post milestone tweets for Kurnik.
  *
- * Flow:
- *   1. Takes version + changelog notes as input
- *   2. Sends to Claude to draft a tweet
- *   3. Prints draft for approval
- *   4. On approval, posts via X API from @erace
- *   5. Prints URL for @kurnik_ai to manually quote-tweet
- *
- * Usage:
- *   bun run scripts/draft-tweet.ts "0.1.0" "Journey site launched with timeline"
- *   bun run scripts/draft-tweet.ts  (interactive — reads from latest CHANGELOG entry)
+ * Two modes:
+ *   bun run tweet draft "0.1.0" "notes"     — drafts via Claude, prints to stdout, exits 2
+ *   bun run tweet post  "0.1.0" "tweet text" — posts to X, no prompts
  *
  * Requires:
  *   ANTHROPIC_API_KEY — for drafting
@@ -23,7 +16,6 @@ import Anthropic from "@anthropic-ai/sdk";
 import { createHmac, randomBytes } from "crypto";
 import { readFileSync } from "fs";
 import { resolve } from "path";
-import { createInterface } from "readline";
 
 // ── Config ──
 
@@ -176,25 +168,12 @@ Respond ONLY as JSON, no markdown fences:
   return JSON.parse(text.trim());
 }
 
-// ── Interactive prompt ──
-
-function ask(question: string): Promise<string> {
-  const rl = createInterface({ input: process.stdin, output: process.stdout });
-  return new Promise((resolve) => {
-    rl.question(question, (answer) => {
-      rl.close();
-      resolve(answer.trim());
-    });
-  });
-}
-
 // ── Get latest changelog entry ──
 
 function getLatestChangelog(): { version: string; notes: string } {
   const changelogPath = resolve(import.meta.dir, "../CHANGELOG.md");
   const content = readFileSync(changelogPath, "utf-8");
 
-  // Find first ## heading and extract content until next ##
   const match = content.match(/^## .+$/m);
   if (!match || match.index === undefined) {
     return { version: "unknown", notes: "New milestone" };
@@ -211,37 +190,22 @@ function getLatestChangelog(): { version: string; notes: string } {
     .filter((l) => l && !l.startsWith("---"))
     .join(". ");
 
-  // Try to extract version from heading
   const versionMatch = match[0].match(/v?(\d+\.\d+\.\d+)/);
   const version = versionMatch ? versionMatch[1] : "latest";
 
   return { version, notes };
 }
 
-// ── Main ──
+// ── Commands ──
 
-async function main() {
+async function cmdDraft(version: string, notes: string) {
   console.log("\n🐓 Kurnik — Tweet Drafter\n");
-
-  // Get version + notes from args or changelog
-  let version = process.argv[2] || "";
-  let notes = process.argv[3] || "";
-
-  if (!version || !notes) {
-    console.log("Reading from CHANGELOG.md...\n");
-    const latest = getLatestChangelog();
-    version = version || latest.version;
-    notes = notes || latest.notes;
-  }
-
   console.log(`Version: v${version}`);
   console.log(`Notes: ${notes}\n`);
 
-  // Draft
   console.log("🤖 Drafting tweet...\n");
   const drafts = await draftTweet(version, notes);
 
-  // Show drafts
   console.log("━".repeat(60));
   console.log(`\n📱 @${PERSONAL_HANDLE} (personal):\n`);
   console.log(`  ${drafts.personal}`);
@@ -250,31 +214,54 @@ async function main() {
   console.log(`  ${drafts.kurnikQuote}\n`);
   console.log("━".repeat(60));
 
-  // Approve
-  const answer = await ask("\nPost to @" + PERSONAL_HANDLE + "? [y/N/edit] ");
+  console.log(`\nTo post, run:`);
+  console.log(`  bun run tweet post "${version}" "${drafts.personal.replace(/"/g, '\\"')}"\n`);
 
-  let finalText = drafts.personal;
+  process.exit(2); // awaiting approval
+}
 
-  if (answer.toLowerCase() === "edit") {
-    finalText = await ask("Enter your tweet: ");
-  } else if (answer.toLowerCase() !== "y" && answer.toLowerCase() !== "yes") {
-    console.log("\n⏭️  Skipped. No tweet posted.\n");
-    return;
-  }
+async function cmdPost(version: string, text: string) {
+  console.log("\n📤 Posting to @" + PERSONAL_HANDLE + "...\n");
 
-  // Post
-  console.log("\n📤 Posting...\n");
-  try {
-    const result = await postTweet(finalText);
-    console.log(`✅ Posted! ${result.url}\n`);
-    console.log(`Now quote-tweet from @${KURNIK_HANDLE}:`);
-    console.log(`  1. Log into @${KURNIK_HANDLE}`);
-    console.log(`  2. Quote: ${result.url}`);
-    console.log(`  3. Text: ${drafts.kurnikQuote}\n`);
-  } catch (err) {
-    console.error(`\n❌ Failed to post:`, err);
-    console.log(`\nManual fallback — copy and post yourself:\n`);
-    console.log(finalText);
+  const result = await postTweet(text);
+  console.log(`✅ Posted! ${result.url}\n`);
+  console.log(`Now quote-tweet from @${KURNIK_HANDLE}:`);
+  console.log(`  1. Log into @${KURNIK_HANDLE}`);
+  console.log(`  2. Quote: ${result.url}`);
+  console.log(`  3. Draft a product-focused reply\n`);
+}
+
+// ── Main ──
+
+async function main() {
+  const mode = process.argv[2];
+
+  if (mode === "draft") {
+    let version = process.argv[3] || "";
+    let notes = process.argv[4] || "";
+
+    if (!version || !notes) {
+      const latest = getLatestChangelog();
+      version = version || latest.version;
+      notes = notes || latest.notes;
+    }
+
+    await cmdDraft(version, notes);
+  } else if (mode === "post") {
+    const version = process.argv[3] || "";
+    const text = process.argv[4] || "";
+
+    if (!text) {
+      console.error("Usage: bun run tweet post <version> <tweet text>");
+      process.exit(1);
+    }
+
+    await cmdPost(version, text);
+  } else {
+    console.error("Usage:");
+    console.error('  bun run tweet draft "0.1.0" "release notes"');
+    console.error('  bun run tweet post  "0.1.0" "exact tweet text"');
+    process.exit(1);
   }
 }
 
