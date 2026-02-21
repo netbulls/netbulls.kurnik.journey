@@ -1,0 +1,13 @@
+{
+  "name": "netbulls.kurnik.journey",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "bun run scripts/build-timeline.ts",
+    "build:timeline": "bun run scripts/build-timeline.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0"
+  }
+}
