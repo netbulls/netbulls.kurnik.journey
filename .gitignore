@@ -10,5 +10,9 @@
 # Drafts
 drafts/
 
+# Secrets (plaintext — encrypted .age files are committed)
+secrets/*.md
+!secrets/.recipients
+
 # Node (in case we add tooling later)
 node_modules/
