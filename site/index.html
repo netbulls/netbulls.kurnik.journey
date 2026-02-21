@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-version="<!-- VERSION -->">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -75,6 +75,7 @@
   footer a { color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
   footer a:hover { color: var(--accent-warm); }
   .footer-links { display: flex; gap: 1.5rem; font-size: 0.8rem; }
+  .footer-version { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--text-muted); opacity: 0.5; }
   @media (max-width: 640px) { .container { padding: 0 1.25rem; } .chapter { padding: 1.25rem 1.5rem; } .chapter::after { display: none; } .chapter-desc { padding-left: 0; } .chapter-status { margin-left: 0; } .chapter-header { flex-direction: column; align-items: flex-start; gap: 0.25rem; } .metaphor { flex-wrap: wrap; gap: 0.5rem; } .m-step { min-width: 80px; } footer { flex-direction: column; gap: 1rem; text-align: center; } }
 </style>
 </head>
@@ -87,7 +88,7 @@
   </header>
   <div class="metaphor">
     <div class="m-step"><div class="m-icon">🥚</div><div class="m-label">Input</div><div class="m-value">Raw Ideas</div></div>
-    <div class="m-step"><div class="m-icon">🩺</div><div class="m-label">Incubation</div><div class="m-value">AI Pipeline</div></div>
+    <div class="m-step"><div class="m-icon">🪺</div><div class="m-label">Incubation</div><div class="m-value">AI Pipeline</div></div>
     <div class="m-step"><div class="m-icon">🐣</div><div class="m-label">Hatching</div><div class="m-value">Product Vision</div></div>
     <div class="m-step"><div class="m-icon">🐓</div><div class="m-label">Growth</div><div class="m-value">Launch-Ready</div></div>
   </div>
@@ -97,6 +98,11 @@
       <div class="chapter-header"><span class="chapter-num">Phase 01</span><span class="chapter-title">Brand Foundation</span></div>
       <p class="chapter-desc">Positioning, personality, audience, visual direction, and the 100-point evaluation framework. The strategic bedrock everything else builds on.</p>
       <div class="chapter-status status-complete">Complete</div>
+    </a>
+    <a href="timeline.html" class="chapter">
+      <div class="chapter-header"><span class="chapter-num">Timeline</span><span class="chapter-title">The Build Log</span></div>
+      <p class="chapter-desc">Every substantial milestone across all Kurnik repos — curated from changelogs, timestamped, AI-selected for relevance.</p>
+      <div class="chapter-status status-complete">Live</div>
     </a>
     <div class="chapter disabled">
       <div class="chapter-header"><span class="chapter-num">Phase 02</span><span class="chapter-title">Symbol Exploration</span></div>
@@ -127,13 +133,14 @@
   <div class="context">
     <div class="context-label">What is Kurnik?</div>
     <p><strong>Kurnik</strong> (Polish: <em>chicken coop</em>) is a product incubator — an AI-powered system that takes messy, contradictory, half-formed founder ideas and hatches them into coherent product visions.</p>
-    <p>Born from 20 years of watching startups fail not from lack of tech, but from founders who can’t articulate what they’re building, for whom, and why.</p>
+    <p>Born from 20 years of watching startups fail not from lack of tech, but from founders who can't articulate what they're building, for whom, and why.</p>
     <p>Built by <a href="https://github.com/netbulls" target="_blank">netbulls</a> · <strong>kurnik.ai</strong></p>
   </div>
   <footer>
-    <p>© 2026 Kurnik · netbulls</p>
+    <p>© 2026 Kurnik · netbulls <span class="footer-version"><!-- VERSION --></span></p>
     <div class="footer-links">
-      <a href="https://github.com/netbulls/netbulls.kurnik.brand" target="_blank">Brand Repo</a>
+      <a href="timeline.html">Timeline</a>
+      <a href="https://github.com/netbulls/netbulls.kurnik.journey" target="_blank">Source</a>
       <a href="https://kurnik.ai" target="_blank">kurnik.ai</a>
     </div>
   </footer>
