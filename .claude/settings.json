@@ -1,0 +1,39 @@
+{
+  "env": {
+    "CLAUDE_TEMPLATE": "base"
+  },
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch",
+
+      "Bash(git:*)",
+      "Bash(git push:*)",
+      "Bash(gh:*)",
+
+      "Bash(mkdir:*)",
+      "Bash(cp:*)",
+      "Bash(mv:*)",
+      "Bash(touch:*)",
+      "Bash(chmod:*)",
+      "Bash(cat:*)",
+      "Bash(echo:*)",
+      "Bash(ls:*)",
+      "Bash(tree:*)",
+      "Bash(find:*)",
+      "Bash(du:*)",
+      "Bash(wc:*)",
+      "Bash(open:*)",
+      "Bash(curl:*)",
+      "Bash(dig:*)"
+    ],
+    "deny": [
+      "Bash(rm:*)",
+      "Bash(rmdir:*)",
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(git clean -f:*)"
+    ]
+  }
+}
