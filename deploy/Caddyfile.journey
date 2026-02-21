@@ -1,0 +1,3 @@
+journey.kurnik.ai {
+	reverse_proxy kurnik-journey-prod:80
+}

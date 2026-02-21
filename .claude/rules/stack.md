@@ -5,8 +5,8 @@
 - **Format:** Static HTML
 - **Styling:** Inline CSS with shared design tokens (CSS variables)
 - **Fonts:** Google Fonts — DM Serif Display, Plus Jakarta Sans, JetBrains Mono
-- **Deploy:** Netlify from `site/` directory
-- **Domain:** TBD (journey.kurnik.ai or similar)
+- **Deploy:** VPS (Caddy container serving `site/` via rsync)
+- **Domain:** journey.kurnik.ai
 
 ## Design Tokens
 

@@ -2,7 +2,7 @@
 
 ## Site Root
 
-`site/` is the deployable directory. Netlify serves from here. Every file in this directory must be production-ready.
+`site/` is the deployable directory. VPS serves from here via Caddy. Every file in this directory must be production-ready.
 
 ## Working Files
 

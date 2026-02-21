@@ -5,7 +5,7 @@
 1. Create the phase HTML document in `site/`
 2. Update `site/index.html` — change the phase from disabled div to linked anchor, flip status badge
 3. Commit with message: `Add Phase XX: [Name]`
-4. Netlify auto-deploys from `site/`
+4. Deploy to VPS: `cd deploy && ./deploy.sh`
 
 ## Content Standards
 

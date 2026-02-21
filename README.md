@@ -11,7 +11,7 @@ A public-facing site that captures every phase of building Kurnik: naming, brand
 ## Structure
 
 ```
-site/                   Deployable site root (Netlify)
+site/                   Deployable site root
   index.html            Journey landing page
   brand-foundation.html Phase 01: Brand Foundation
   ...                   Future phases added here
@@ -27,7 +27,7 @@ site/                   Deployable site root (Netlify)
 
 ## Deploy
 
-Netlify: publish directory `site/`, no build command.
+VPS: `cd deploy && ./deploy.sh` — rsyncs `site/` to VPS, served by Caddy container at journey.kurnik.ai.
 
 ---
 
