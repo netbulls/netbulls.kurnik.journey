@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Release: tag, build, snapshot, and deploy the journey site.
+# Release: tag, build, snapshot, tweet, and deploy the journey site.
 #
 # Usage: ./scripts/release.sh <version>
 #   version: semver like 0.2.0 (will be tagged as v0.2.0)
@@ -15,6 +15,7 @@
 #   7. Commits everything, moves tag to final commit
 #   8. Pushes tag + commit
 #   9. Creates GitHub Release with notes from CHANGELOG.md
+#  10. Drafts + posts milestone tweet (interactive approval)
 #
 # Example:
 #   ANTHROPIC_API_KEY=sk-... ./scripts/release.sh 0.1.0
@@ -117,6 +118,15 @@ if command -v gh &>/dev/null; then
 else
   echo ""
   echo "gh CLI not found — skipping GitHub Release. Create manually or install gh."
+fi
+
+# --- Tweet milestone ---
+echo ""
+echo "==> Tweet milestone..."
+if [ -n "${X_PERSONAL_API_KEY:-}" ]; then
+  bun run scripts/draft-tweet.ts "$VERSION" "${NOTES:-Release v${VERSION}}" || echo "Tweet skipped or failed"
+else
+  echo "X API keys not set — skipping tweet. Run 'bun run tweet' manually."
 fi
 
 echo ""

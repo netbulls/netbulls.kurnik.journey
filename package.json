@@ -8,6 +8,7 @@
     "build:timeline": "bun run scripts/build-timeline.ts",
     "build:versions": "bun run scripts/build-version-browser.ts",
     "build": "bun run version-inject && bun run build:timeline",
+    "tweet": "bun run scripts/draft-tweet.ts",
     "snapshot": "git add -A && git commit -m \"snapshot: $(git describe --tags --always)\" && echo 'Snapshot committed'",
     "release": "bash scripts/release.sh"
   },
