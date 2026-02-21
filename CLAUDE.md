@@ -4,7 +4,7 @@
 
 ## Project Overview
 
-**netbulls.kurnik.journey** is the public journey site for Kurnik — documenting every phase of building an AI-powered product incubator from idea to launch. Static HTML site deployed to Netlify.
+**netbulls.kurnik.journey** is the public journey site for Kurnik — documenting every phase of building an AI-powered product incubator from idea to launch. Static HTML site deployed to VPS (self-hosted).
 
 This is content marketing and credibility signal. Shows structured product thinking in action — "how we built Kurnik from zero."
 
@@ -34,7 +34,7 @@ site/
 
 ## Critical Rules
 
-- Publish directory is `site/` — Netlify serves from here
+- Publish directory is `site/` — VPS serves from here
 - Every HTML file must be fully self-contained (inline CSS, no external dependencies except Google Fonts)
 - Keep the design system consistent: same CSS variables, same fonts, same component patterns across all phase documents
 - When a phase completes, update `site/index.html` to link to it and flip its status badge
