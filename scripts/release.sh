@@ -1,19 +1,23 @@
 #!/usr/bin/env bash
 #
-# Release: tag, build, and deploy the journey site.
+# Release: tag, build, snapshot, and deploy the journey site.
 #
 # Usage: ./scripts/release.sh <version>
 #   version: semver like 0.2.0 (will be tagged as v0.2.0)
 #
 # What it does:
-#   1. Tags the current commit as v<version>
-#   2. Runs version-inject (stamps version into package.json + HTML)
-#   3. Runs build:timeline (generates timeline page)
-#   4. Commits the built artifacts
-#   5. Pushes tag + commit
+#   1. Pre-flight checks (clean tree, tag doesn't exist)
+#   2. Tags the current commit as v<version>
+#   3. Runs version-inject (stamps version into package.json + HTML)
+#   4. Runs build:timeline (generates timeline page via AI curation)
+#   5. Freezes current site/ into site/versions/v<version>/
+#   6. Regenerates site/versions/index.html (version browser)
+#   7. Commits everything, moves tag to final commit
+#   8. Pushes tag + commit
+#   9. Creates GitHub Release with notes from CHANGELOG.md
 #
 # Example:
-#   ./scripts/release.sh 0.1.0
+#   ANTHROPIC_API_KEY=sk-... ./scripts/release.sh 0.1.0
 #
 
 set -euo pipefail
@@ -40,9 +44,10 @@ if git rev-parse "v${VERSION}" >/dev/null 2>&1; then
   exit 1
 fi
 
-# --- Tag ---
 echo "=== Release v${VERSION} ==="
 echo ""
+
+# --- Tag (preliminary, will be moved after build) ---
 git tag -a "v${VERSION}" -m "Release v${VERSION}"
 echo "Tagged: v${VERSION}"
 
@@ -55,10 +60,32 @@ echo ""
 echo "==> Building timeline..."
 bun run build:timeline
 
+# --- Freeze snapshot ---
+echo ""
+echo "==> Freezing site snapshot to versions/v${VERSION}/..."
+SNAPSHOT_DIR="site/versions/v${VERSION}"
+mkdir -p "$SNAPSHOT_DIR"
+
+# Copy all site files except the versions/ directory itself
+for item in site/*; do
+  basename="$(basename "$item")"
+  if [ "$basename" != "versions" ]; then
+    cp -r "$item" "$SNAPSHOT_DIR/"
+  fi
+done
+
+echo "Snapshot: $SNAPSHOT_DIR/ ($(find "$SNAPSHOT_DIR" -type f | wc -l | tr -d ' ') files)"
+
+# --- Generate version browser ---
+echo ""
+echo "==> Generating version browser..."
+bun run scripts/build-version-browser.ts
+
 # --- Commit built artifacts ---
-if ! git diff --quiet; then
+echo ""
+if ! git diff --quiet || [ -n "$(git ls-files --others --exclude-standard)" ]; then
   git add -A
-  git commit -m "Release v${VERSION} — built artifacts"
+  git commit -m "Release v${VERSION} — built artifacts + frozen snapshot"
   # Move tag to include the build commit
   git tag -f -a "v${VERSION}" -m "Release v${VERSION}"
 fi
@@ -94,6 +121,8 @@ fi
 
 echo ""
 echo "=== Done ==="
-echo "  Version:  v${VERSION}"
-echo "  Tag:     v${VERSION}"
-echo "  Site:    journey.kurnik.ai"
+echo "  Version:   v${VERSION}"
+echo "  Snapshot:  journey.kurnik.ai/versions/v${VERSION}/"
+echo "  Browser:   journey.kurnik.ai/versions/"
+echo "  Tag:       v${VERSION}"
+echo "  Site:      journey.kurnik.ai"
