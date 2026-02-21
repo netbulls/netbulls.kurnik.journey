@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kurnik — Brand Foundation</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-deep: #0C0A09;
+    --bg-surface: #1C1917;
+    --bg-elevated: #292524;
+    --bg-hover: #44403C;
+    --text-primary: #FAFAF9;
+    --text-secondary: #A8A29E;
+    --text-muted: #78716C;
+    --accent-warm: #F59E0B;
+    --accent-warm-dim: rgba(245, 158, 11, 0.15);
+    --accent-warm-glow: rgba(245, 158, 11, 0.08);
+    --accent-egg: #FDE68A;
+    --accent-rooster: #DC2626;
+    --border: rgba(168, 162, 158, 0.12);
+    --border-accent: rgba(245, 158, 11, 0.3);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  .container { max-width: 900px; margin: 0 auto; padding: 0 2rem; }
+
+  /* Back link */
+  .back-link { display: inline-flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--text-muted); text-decoration: none; letter-spacing: 0.05em; padding: 2rem 0 0; transition: color 0.2s; }
+  .back-link:hover { color: var(--accent-warm); }
+  .back-link::before { content: '←'; }
+
+  .hero { padding: 4rem 0 4rem; text-align: center; position: relative; }
+  .hero::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 1px; background: linear-gradient(90deg, transparent, var(--accent-warm), transparent); }
+  .hero-icon { font-size: 4rem; margin-bottom: 1.5rem; display: block; }
+  h1 { font-family: 'DM Serif Display', Georgia, serif; font-size: 3.5rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 0.5rem; background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-warm) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .hero-subtitle { font-size: 1.25rem; color: var(--text-secondary); font-weight: 300; margin-bottom: 0.5rem; }
+  .hero-tagline { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--accent-warm); letter-spacing: 0.05em; }
+
+  section { padding: 4rem 0; border-top: 1px solid var(--border); }
+  h2 { font-family: 'DM Serif Display', Georgia, serif; font-size: 2rem; font-weight: 400; margin-bottom: 0.5rem; color: var(--text-primary); }
+  h2 .section-number { color: var(--accent-warm); font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; font-weight: 500; display: block; margin-bottom: 0.5rem; letter-spacing: 0.1em; }
+  h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-top: 2.5rem; margin-bottom: 1rem; }
+  p { color: var(--text-secondary); margin-bottom: 1.25rem; }
+  strong { color: var(--text-primary); font-weight: 600; }
+
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+  .card { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; transition: border-color 0.2s, background 0.2s; }
+  .card:hover { border-color: var(--border-accent); background: var(--bg-elevated); }
+  .card-icon { font-size: 1.5rem; margin-bottom: 0.75rem; display: block; }
+  .card-title { font-weight: 600; font-size: 0.95rem; color: var(--text-primary); margin-bottom: 0.5rem; }
+  .card-desc { font-size: 0.875rem; color: var(--text-muted); line-height: 1.6; }
+  .card.highlight { border-color: var(--border-accent); background: var(--accent-warm-glow); }
+
+  .insight { border-left: 3px solid var(--accent-warm); padding: 1.25rem 1.5rem; margin: 1.5rem 0; background: var(--accent-warm-glow); border-radius: 0 8px 8px 0; }
+  .insight p { color: var(--text-primary); margin: 0; font-size: 0.95rem; }
+  .insight .source { color: var(--text-muted); font-size: 0.8rem; margin-top: 0.5rem; display: block; }
+
+  table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.9rem; }
+  th { text-align: left; padding: 0.75rem 1rem; background: var(--bg-surface); color: var(--text-secondary); font-weight: 500; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border); }
+  td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); color: var(--text-secondary); }
+  td:first-child { color: var(--text-primary); font-weight: 500; }
+
+  .comp-strip { display: flex; flex-wrap: wrap; gap: 0.75rem; margin: 1rem 0; }
+  .comp-chip { background: var(--bg-surface); border: 1px solid var(--border); padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.85rem; color: var(--text-secondary); }
+
+  .score-section { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin: 1rem 0; }
+  .score-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+  .score-title { font-weight: 600; color: var(--text-primary); }
+  .score-points { font-family: 'JetBrains Mono', monospace; color: var(--accent-warm); font-size: 0.9rem; }
+  .score-criteria { list-style: none; padding: 0; }
+  .score-criteria li { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border); font-size: 0.875rem; color: var(--text-secondary); }
+  .score-criteria li:last-child { border-bottom: none; }
+  .score-criteria .pts { font-family: 'JetBrains Mono', monospace; color: var(--text-muted); font-size: 0.8rem; }
+
+  .metaphor-flow { display: flex; align-items: center; justify-content: center; gap: 1rem; margin: 2rem 0; flex-wrap: wrap; }
+  .metaphor-step { text-align: center; padding: 1.25rem; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; min-width: 140px; }
+  .metaphor-step .icon { font-size: 2rem; margin-bottom: 0.5rem; display: block; }
+  .metaphor-step .label { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .metaphor-step .value { font-size: 0.95rem; color: var(--text-primary); font-weight: 500; margin-top: 0.25rem; }
+  .metaphor-arrow { color: var(--accent-warm); font-size: 1.25rem; }
+
+  .swatch-row { display: flex; gap: 1rem; margin: 1.5rem 0; flex-wrap: wrap; }
+  .swatch { flex: 1; min-width: 150px; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+  .swatch-color { height: 80px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-family: 'JetBrains Mono', monospace; }
+  .swatch-info { padding: 0.75rem 1rem; background: var(--bg-surface); }
+  .swatch-name { font-weight: 600; font-size: 0.85rem; color: var(--text-primary); }
+  .swatch-role { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem; }
+
+  .avoid-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem; margin: 1rem 0; }
+  .avoid-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1rem; background: rgba(220, 38, 38, 0.06); border: 1px solid rgba(220, 38, 38, 0.15); border-radius: 8px; font-size: 0.875rem; color: var(--text-secondary); }
+  .avoid-item::before { content: '✕'; color: var(--accent-rooster); font-weight: 700; font-size: 0.75rem; }
+
+  .decision { background: var(--accent-warm-glow); border: 1px solid var(--border-accent); border-radius: 12px; padding: 1.5rem; margin: 2rem 0; }
+  .decision-label { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--accent-warm); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem; }
+  .decision p { color: var(--text-primary); margin: 0; }
+
+  footer { padding: 3rem 0; border-top: 1px solid var(--border); text-align: center; color: var(--text-muted); font-size: 0.8rem; }
+
+  .type-specimen { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; margin: 1rem 0; text-align: center; }
+  .type-specimen .sample { font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--text-primary); }
+  .type-specimen .meta { font-size: 0.8rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
+
+  .timeline { position: relative; padding-left: 2rem; margin: 1.5rem 0; }
+  .timeline::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--border); }
+  .timeline-item { position: relative; padding-bottom: 1.5rem; }
+  .timeline-item::before { content: ''; position: absolute; left: -2rem; top: 0.4rem; width: 10px; height: 10px; border-radius: 50%; background: var(--accent-warm); border: 2px solid var(--bg-deep); }
+  .timeline-item .phase { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--accent-warm); letter-spacing: 0.05em; }
+  .timeline-item .desc { font-size: 0.9rem; color: var(--text-secondary); margin-top: 0.25rem; }
+
+  @media (max-width: 640px) { h1 { font-size: 2.5rem; } .container { padding: 0 1.25rem; } .metaphor-flow { flex-direction: column; } .metaphor-arrow { transform: rotate(90deg); } }
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="index.html" class="back-link">Back to Journey</a>
+
+  <header class="hero">
+    <span class="hero-icon">🐔</span>
+    <h1>Kurnik</h1>
+    <p class="hero-subtitle">Brand Foundation</p>
+    <span class="hero-tagline">WHERE IDEAS COME HOME TO ROOST</span>
+  </header>
+
+  <section>
+    <h2><span class="section-number">01</span>Brand Foundation</h2>
+    <h3>What is Kurnik?</h3>
+    <p>A <strong>product incubator</strong> — an AI-powered system that takes messy, contradictory, half-formed founder ideas and hatches them into coherent product visions. No forms, no process overhead. Just throw your thoughts in. The AI surfaces contradictions, clusters themes, identifies your real audience, and gradually shapes chaos into clarity.</p>
+    <p>The bridge between <strong>"I have this idea…"</strong> and <strong>"here's a spec an agent can build."</strong></p>
+
+    <h3>The Core Metaphor</h3>
+    <div class="metaphor-flow">
+      <div class="metaphor-step"><span class="icon">🥚</span><span class="label">Input</span><span class="value">Raw Ideas</span></div>
+      <span class="metaphor-arrow">→</span>
+      <div class="metaphor-step"><span class="icon">🪹</span><span class="label">Incubation</span><span class="value">AI Pipeline</span></div>
+      <span class="metaphor-arrow">→</span>
+      <div class="metaphor-step"><span class="icon">🐣</span><span class="label">Hatching</span><span class="value">Product Vision</span></div>
+      <span class="metaphor-arrow">→</span>
+      <div class="metaphor-step"><span class="icon">🐓</span><span class="label">Growth</span><span class="value">Launch-Ready</span></div>
+    </div>
+
+    <div class="insight">
+      <p><strong>Kurnik</strong> means "chicken coop" in Polish — where feedback comes home to roost. Clean tech namespace. Memorable, unique, easy mascot. Inside joke for Polish team behind netbulls agency.</p>
+      <span class="source">Domain: kurnik.ai — registered via Porkbun</span>
+    </div>
+
+    <h3>Product Vision</h3>
+    <div class="card-grid">
+      <div class="card highlight"><span class="card-icon">🎯</span><div class="card-title">Phase 1: Idea Incubator</div><div class="card-desc">Founders dump raw thoughts. AI classifies, clusters, detects contradictions, synthesizes into coherent product vision. The foundational piece.</div></div>
+      <div class="card"><span class="card-icon">🔧</span><div class="card-title">Phase 2: Spec Generation</div><div class="card-desc">Hatched vision becomes implementation-ready specs. Foundation documents, user stories, architectural decisions — ready for agents or teams.</div></div>
+      <div class="card"><span class="card-icon">🤖</span><div class="card-title">Phase 3: Agent Orchestration</div><div class="card-desc">Connect to design agents, software agents, marketing agents. Dispatch specs to AI workers. Review and approve output. Startup factory.</div></div>
+      <div class="card"><span class="card-icon">🏭</span><div class="card-title">Phase 4: Full Pipeline</div><div class="card-desc">End-to-end: idea → vision → spec → build → launch. Kurnik becomes the operating system for building products.</div></div>
+    </div>
+
+    <h3>The Problem We Solve</h3>
+    <div class="insight">
+      <p>"I've watched 20 years of startups fail. Not because the tech wasn't there, but because the people controlling the money didn't know what they were building, for whom. Ego-driven decisions. Contradictory ideas. Direction changes on vibes, not strategy. There are gobs and gobs of people who have money or can get money to get things going, but they don't approach it methodically."</p>
+      <span class="source">— Founder insight, from 20 years running a software agency across US, UK, EU</span>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="section-number">02</span>How "Kurnik" Was Chosen</h2>
+    <h3>Etymology</h3>
+    <p><strong>Kurnik</strong> (Polish: <em>kurnik</em>) — a chicken coop. Where chickens come home to roost. Where eggs are laid and hatched. The perfect metaphor for a product incubator: bring your messy ideas home, keep them warm, and something real hatches.</p>
+    <h3>Why It Won</h3>
+    <table>
+      <tr><th>Attribute</th><th>Detail</th></tr>
+      <tr><td>Length</td><td>6 characters — short, punchy, CLI-friendly</td></tr>
+      <tr><td>Pronunciation</td><td>"KOOR-nik" — easy in English, native in Polish</td></tr>
+      <tr><td>Domain</td><td>kurnik.ai — registered, premium TLD for AI product</td></tr>
+      <tr><td>Tech namespace</td><td>Clean — only kurnik.pl (Polish games site from 2001, now playok.com)</td></tr>
+      <tr><td>Mascot potential</td><td>Chicken/rooster — strong, recognizable, fun without being juvenile</td></tr>
+      <tr><td>CLI feel</td><td><code>kurnik "timer broken on mac"</code> — natural</td></tr>
+      <tr><td>Metaphor depth</td><td>Eggs → incubation → hatching → roosting. Maps perfectly to product lifecycle.</td></tr>
+    </table>
+    <h3>Names Explored &amp; Rejected</h3>
+    <div class="comp-strip">
+      <span class="comp-chip">Prism (OpenAI conflict)</span><span class="comp-chip">Sift (taken)</span><span class="comp-chip">Glean ($7B company)</span><span class="comp-chip">Spectra</span><span class="comp-chip">Kura (Kura AI exists)</span><span class="comp-chip">Kurato (taken)</span><span class="comp-chip">Lumen</span><span class="comp-chip">Vox</span><span class="comp-chip">Gist</span><span class="comp-chip">Crux</span>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="section-number">03</span>Target Audience</h2>
+    <h3>Primary: Founders &amp; Aspiring Entrepreneurs</h3>
+    <p>People with capital (or access to it) and ambition, but no methodology. They have ideas — lots of them, often contradictory. They've been told to "just build it" but don't know what "it" actually is. They need structure without bureaucracy, methodology without MBA jargon.</p>
+    <div class="card-grid">
+      <div class="card"><span class="card-icon">💡</span><div class="card-title">The First-Timer</div><div class="card-desc">Has money, has an idea, has never built software. Doesn't know they need requirements. Thinks "I want Uber for X" is a spec.</div></div>
+      <div class="card"><span class="card-icon">🔄</span><div class="card-title">The Serial Pivoter</div><div class="card-desc">Changes direction every meeting. New feature every week. Can't articulate a consistent vision because they haven't been forced to confront contradictions.</div></div>
+      <div class="card"><span class="card-icon">💰</span><div class="card-title">The Funded Founder</div><div class="card-desc">Has raised money or bootstrapping with revenue. Needs to translate vision into something a team (or AI agents) can actually execute.</div></div>
+    </div>
+    <h3>Secondary (Future): Engineering &amp; Product Teams</h3>
+    <p>Once a product is hatched, the ongoing feedback loop — bug reports, feature requests, user feedback — flows through Kurnik too. Engineering directors and PMs use it to manage the living product. But this is Phase 2+ audience.</p>
+    <div class="decision"><div class="decision-label">Decision</div><p>Day one brand voice speaks to founders. Approachable, warm, confident. Not technical jargon. Not enterprise sales language. Think: "Your ideas are valuable. Let's make sense of them together."</p></div>
+  </section>
+
+  <section>
+    <h2><span class="section-number">04</span>Brand Personality</h2>
+    <h3>Voice Profile: Warm &amp; Confident</h3>
+    <p>Notion meets Stripe. Approachable but credible. Kurnik doesn't talk down to you for having messy ideas — messy ideas are the raw material. But it also doesn't pretend chaos is fine. It's the warm, honest advisor who says "I see what you're going for — let me show you the contradictions."</p>
+    <table>
+      <tr><th>Trait</th><th>We Are</th><th>We're Not</th></tr>
+      <tr><td>Warm</td><td>Welcoming, patient, encouraging</td><td>Cold, clinical, transactional</td></tr>
+      <tr><td>Confident</td><td>Opinionated, clear, decisive</td><td>Timid, wishy-washy, over-hedging</td></tr>
+      <tr><td>Honest</td><td>Surfaces contradictions, tells you what you need to hear</td><td>Yes-man, rubber-stamping bad ideas</td></tr>
+      <tr><td>Playful</td><td>Chicken metaphors, personality, wit</td><td>Silly, juvenile, unserious</td></tr>
+      <tr><td>Methodical</td><td>Structured thinking, clear process</td><td>Bureaucratic, rigid, process-for-process-sake</td></tr>
+    </table>
+    <div class="insight"><p>The chicken coop metaphor should feel like an inside joke you're in on, not a gimmick. It earns its place by being genuinely useful as mental model: eggs = ideas, incubation = AI processing, hatching = viable product, rooster = the thing that wakes everyone up.</p></div>
+    <h3>Brand Archetypes</h3>
+    <div class="card-grid">
+      <div class="card highlight"><span class="card-icon">🧙</span><div class="card-title">Primary: The Sage</div><div class="card-desc">Wisdom, understanding, clarity. Helps founders see what they can't see themselves. Surfaces truth from chaos.</div></div>
+      <div class="card"><span class="card-icon">🔨</span><div class="card-title">Secondary: The Creator</div><div class="card-desc">Building, making, bringing things to life. The incubator that turns abstract into concrete.</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="section-number">05</span>Visual Direction</h2>
+    <h3>Color Direction: Dark &amp; Rich</h3>
+    <p>Dark backgrounds with warm accents. Feels like a premium incubator — where serious work happens, but with warmth. Think: a well-lit workspace at night, amber glow, rich surfaces.</p>
+    <div class="swatch-row">
+      <div class="swatch"><div class="swatch-color" style="background: #0C0A09; color: #78716C;">#0C0A09</div><div class="swatch-info"><div class="swatch-name">Deep Background</div><div class="swatch-role">Primary canvas</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background: #1C1917; color: #78716C;">#1C1917</div><div class="swatch-info"><div class="swatch-name">Surface</div><div class="swatch-role">Cards, panels</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background: #F59E0B; color: #0C0A09;">#F59E0B</div><div class="swatch-info"><div class="swatch-name">Warm Amber</div><div class="swatch-role">Primary accent</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background: #FDE68A; color: #0C0A09;">#FDE68A</div><div class="swatch-info"><div class="swatch-name">Egg Cream</div><div class="swatch-role">Highlight, secondary accent</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background: #DC2626; color: #FAFAF9;">#DC2626</div><div class="swatch-info"><div class="swatch-name">Rooster Red</div><div class="swatch-role">Alert, comb accent</div></div></div>
+    </div>
+    <p>These are exploration starting points, not final palette. The warm stone tones (Tailwind Stone scale) create a natural, earthy dark mode that avoids the cold blue-black of typical tech dark themes.</p>
+
+    <h3>Symbol Direction: Abstract Rooster</h3>
+    <div class="decision"><div class="decision-label">Decision</div><p><strong>Strong presence</strong> — the rooster/chicken is the main logo element, but stylized and abstract. Not a literal chicken illustration. Think geometric, minimal, recognizable at 16px. The silhouette should read as "rooster" without being a clip art chicken.</p></div>
+
+    <h3>Conceptual Territories to Explore</h3>
+    <div class="card-grid">
+      <div class="card"><span class="card-icon">🔺</span><div class="card-title">Geometric Rooster</div><div class="card-desc">Angular, minimal shapes forming a rooster silhouette. Triangles, clean lines. Modern, tech-forward but with personality.</div></div>
+      <div class="card"><span class="card-icon">⭕</span><div class="card-title">Egg + Rooster Fusion</div><div class="card-desc">Egg shape that contains or transforms into a rooster. Captures the incubation metaphor in a single mark.</div></div>
+      <div class="card"><span class="card-icon">✦</span><div class="card-title">Abstract Comb / Crown</div><div class="card-desc">The rooster's comb as a standalone element — like a crown. Suggests leadership, the "king of the coop." Could sit above the wordmark.</div></div>
+      <div class="card"><span class="card-icon">◐</span><div class="card-title">Nested / Contained</div><div class="card-desc">Shapes nested inside each other (like eggs in a nest, or ideas being contained). Rooster profile as negative space within a container.</div></div>
+    </div>
+
+    <h3>Visual Constraints</h3>
+    <table>
+      <tr><th>Constraint</th><th>Requirement</th></tr>
+      <tr><td>Scalability</td><td>Works from 16px (favicon) to 256px+ (hero)</td></tr>
+      <tr><td>Color modes</td><td>Single color + full color variants</td></tr>
+      <tr><td>Backgrounds</td><td>Must work on dark AND light backgrounds</td></tr>
+      <tr><td>Format</td><td>SVG with currentColor for theme adaptability</td></tr>
+      <tr><td>Detail density</td><td>~15% optimal (research-backed Goldilocks zone)</td></tr>
+      <tr><td>Recognition speed</td><td>Brain identifies images in 13ms — bold, unambiguous shapes</td></tr>
+    </table>
+
+    <h3>What to Avoid</h3>
+    <div class="avoid-grid">
+      <div class="avoid-item">Literal chicken illustration</div><div class="avoid-item">Cartoon / mascot-first style</div><div class="avoid-item">Generic lightbulb (ideas cliché)</div><div class="avoid-item">Brain / neural network imagery</div><div class="avoid-item">Rocket ship (startup cliché)</div><div class="avoid-item">Funnel / pipeline diagrams</div><div class="avoid-item">Generic AI sparkle / stars</div><div class="avoid-item">Overly cute / kawaii</div>
+    </div>
+
+    <h3>Competitive Visual Landscape</h3>
+    <p>Understanding what's already in the visual space helps us differentiate:</p>
+    <table>
+      <tr><th>Brand</th><th>Visual Style</th><th>What We Can Learn</th></tr>
+      <tr><td>Linear</td><td>Ultra-minimal, monochrome, sharp angles</td><td>Proves dark themes work for tools. But too cold for us.</td></tr>
+      <tr><td>Notion</td><td>Clean, warm, lots of whitespace, friendly illustrations</td><td>Warmth works for tools. But we need more edge.</td></tr>
+      <tr><td>Stripe</td><td>Gradient-rich, confident, premium feel</td><td>Confidence + polish. Our premium incubator vibe.</td></tr>
+      <tr><td>GitHub (Octocat)</td><td>Strong mascot that IS the brand</td><td>Proof a stylized animal can anchor a serious dev brand.</td></tr>
+      <tr><td>Supabase</td><td>Bold green, confident, developer-friendly</td><td>Strong color ownership. One accent color, committed.</td></tr>
+      <tr><td>Slack</td><td>Colorful, playful, warm</td><td>Playfulness in a work tool. But their rebrand lost character.</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2><span class="section-number">06</span>Typography Direction</h2>
+    <p>Typography needs to bridge warmth and credibility. Too geometric = cold tech tool. Too rounded = not serious enough. The sweet spot: humanist or transitional faces with character.</p>
+    <h3>Categories to Explore</h3>
+    <table>
+      <tr><th>Category</th><th>Traits</th><th>Fit for Kurnik</th></tr>
+      <tr><td>Geometric sans</td><td>Clean, modern, precise</td><td>Could work for wordmark if paired with warm symbol</td></tr>
+      <tr><td>Humanist sans</td><td>Warm, readable, friendly</td><td>Strong candidate — warmth without being soft</td></tr>
+      <tr><td>Slab serif</td><td>Grounded, confident, editorial</td><td>Interesting for wordmark — conveys authority</td></tr>
+      <tr><td>Display / custom</td><td>Unique, ownable, memorable</td><td>Best outcome if we find the right one</td></tr>
+    </table>
+    <div class="type-specimen"><div class="sample" style="font-family: 'DM Serif Display', serif;">kurnik</div><div class="meta">DM Serif Display — warm, editorial, classic authority</div></div>
+    <div class="type-specimen"><div class="sample" style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700;">kurnik</div><div class="meta">Plus Jakarta Sans Bold — modern, friendly, geometric warmth</div></div>
+    <div class="type-specimen"><div class="sample" style="font-family: 'JetBrains Mono', monospace; font-weight: 500;">kurnik</div><div class="meta">JetBrains Mono — developer DNA, technical credibility</div></div>
+    <p>These are directional samples, not final choices. The real typography exploration happens alongside symbol design — they need to be evaluated as a pair.</p>
+  </section>
+
+  <section>
+    <h2><span class="section-number">07</span>Evaluation Framework</h2>
+    <p>Adapted from the proovx 100-point scientific framework, recalibrated for Kurnik's positioning as a founder-facing product incubator.</p>
+    <div class="score-section"><div class="score-header"><span class="score-title">A: Visual Design Effectiveness</span><span class="score-points">30 pts</span></div><ul class="score-criteria"><li><span>Recognizability — does the rooster read immediately?</span><span class="pts">7 pts</span></li><li><span>Visual harmony — are all elements balanced and congruent?</span><span class="pts">5 pts</span></li><li><span>Simplicity with meaning — quick to process, engaging enough?</span><span class="pts">5 pts</span></li><li><span>Scalability — works at 16px favicon to 256px hero?</span><span class="pts">5 pts</span></li><li><span>Gestalt grouping — shapes cohere into recognizable whole?</span><span class="pts">4 pts</span></li><li><span>Dark/light adaptability — works on both backgrounds?</span><span class="pts">4 pts</span></li></ul></div>
+    <div class="score-section"><div class="score-header"><span class="score-title">B: Metaphor &amp; Meaning</span><span class="score-points">25 pts</span></div><ul class="score-criteria"><li><span>Incubation signal — conveys "ideas becoming products"?</span><span class="pts">7 pts</span></li><li><span>Warmth / approachability — invites founders in?</span><span class="pts">6 pts</span></li><li><span>Confidence / authority — signals "we know what we're doing"?</span><span class="pts">5 pts</span></li><li><span>Chicken coop connection — metaphor lands?</span><span class="pts">4 pts</span></li><li><span>Growth / transformation — static mark suggests movement?</span><span class="pts">3 pts</span></li></ul></div>
+    <div class="score-section"><div class="score-header"><span class="score-title">C: Color Strategy</span><span class="score-points">20 pts</span></div><ul class="score-criteria"><li><span>Warmth / premium feel — dark + warm accent execution?</span><span class="pts">6 pts</span></li><li><span>Competitive differentiation — stands apart from dev tool palette?</span><span class="pts">5 pts</span></li><li><span>Emotional resonance — color evokes right feelings?</span><span class="pts">5 pts</span></li><li><span>Versatility — works in mono, two-tone, full color?</span><span class="pts">4 pts</span></li></ul></div>
+    <div class="score-section"><div class="score-header"><span class="score-title">D: Typography-Icon Harmony</span><span class="score-points">15 pts</span></div><ul class="score-criteria"><li><span>Shape congruence — font and icon share visual DNA?</span><span class="pts">5 pts</span></li><li><span>Visual weight balance — proportional boldness?</span><span class="pts">4 pts</span></li><li><span>Personality alignment — same brand traits?</span><span class="pts">4 pts</span></li><li><span>Readability at scale — legible at small sizes?</span><span class="pts">2 pts</span></li></ul></div>
+    <div class="score-section"><div class="score-header"><span class="score-title">E: Audience Resonance</span><span class="score-points">10 pts</span></div><ul class="score-criteria"><li><span>Founder appeal — feels trustworthy to non-technical founders?</span><span class="pts">4 pts</span></li><li><span>Tech credibility — earns respect from dev teams too?</span><span class="pts">3 pts</span></li><li><span>Memorability — would a founder remember after one viewing?</span><span class="pts">3 pts</span></li></ul></div>
+    <div class="insight"><p><strong>Score Interpretation:</strong> 85-100 Excellent — ship it. 70-84 Good — minor refinements. 55-69 Fair — significant work needed. Below 55 — back to exploration.</p></div>
+  </section>
+
+  <section>
+    <h2><span class="section-number">08</span>Design Process Roadmap</h2>
+    <div class="timeline">
+      <div class="timeline-item"><div class="phase">PHASE 1 — BRAND FOUNDATION</div><div class="desc">This document. Lock in positioning, personality, audience, visual direction, and evaluation framework. ✓</div></div>
+      <div class="timeline-item"><div class="phase">PHASE 2 — SYMBOL EXPLORATION</div><div class="desc">Batch of 15-20 rooster symbol concepts across the four conceptual territories. Pair with 4-6 candidate typefaces.</div></div>
+      <div class="timeline-item"><div class="phase">PHASE 3 — SCIENTIFIC RANKING</div><div class="desc">Apply 100-point framework. Identify top 5-6 candidates. Research-backed evaluation.</div></div>
+      <div class="timeline-item"><div class="phase">PHASE 4 — REFINEMENT</div><div class="desc">Top 3 candidates get full brand guideline treatment. Side-by-side comparison.</div></div>
+      <div class="timeline-item"><div class="phase">PHASE 5 — LOGO DEVELOPMENT</div><div class="desc">Winner gets horizontal logo, color variants, responsive versions. Character refinements (like proovx's 30% enlarged "x").</div></div>
+      <div class="timeline-item"><div class="phase">PHASE 6 — BRAND BOOK</div><div class="desc">Final identity package. All variants, specs, usage rules, asset files. Production-ready.</div></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Kurnik Brand Foundation — February 2026</p>
+    <p style="margin-top: 0.5rem;">Built by netbulls · kurnik.ai</p>
+  </footer>
+</div>
+</body>
+</html>

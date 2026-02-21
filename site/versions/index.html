@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kurnik Journey — Version Archive</title>
+<meta name="description" content="Browse every version of the Kurnik journey site — frozen snapshots from idea to product.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-deep: #0C0A09;
+    --bg-surface: #1C1917;
+    --bg-elevated: #292524;
+    --text-primary: #FAFAF9;
+    --text-secondary: #A8A29E;
+    --text-muted: #78716C;
+    --accent-warm: #F59E0B;
+    --accent-warm-dim: rgba(245, 158, 11, 0.15);
+    --accent-warm-glow: rgba(245, 158, 11, 0.08);
+    --accent-egg: #FDE68A;
+    --border: rgba(168, 162, 158, 0.12);
+    --border-accent: rgba(245, 158, 11, 0.3);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    top: -30%;
+    right: -20%;
+    width: 70vw;
+    height: 70vw;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(245, 158, 11, 0.035) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    padding: 2rem 0 0;
+    transition: color 0.2s;
+  }
+  .back-link:hover { color: var(--accent-warm); }
+  .back-link::before { content: '\2190'; }
+
+  .header {
+    padding: 4rem 0 3rem;
+  }
+
+  .header-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent-warm);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .header-meta::before {
+    content: '';
+    width: 32px;
+    height: 1px;
+    background: var(--accent-warm);
+    opacity: 0.5;
+  }
+
+  .header h1 {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 400;
+    letter-spacing: -0.025em;
+    margin-bottom: 0.75rem;
+  }
+
+  .header p {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    font-weight: 300;
+    max-width: 480px;
+  }
+
+  .versions-list {
+    padding-bottom: 4rem;
+  }
+
+  .ver-entry {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    text-decoration: none;
+    color: inherit;
+    padding: 1.25rem 1.5rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 0.6rem;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+  }
+
+  .ver-entry:hover {
+    border-color: var(--border-accent);
+    background: var(--bg-elevated);
+    transform: translateX(4px);
+  }
+
+  .ver-entry.ver-latest {
+    border-color: var(--border-accent);
+    background: var(--accent-warm-glow);
+  }
+
+  .ver-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--accent-warm);
+    min-width: 64px;
+    flex-shrink: 0;
+  }
+
+  .ver-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .ver-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .ver-meta time {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+  }
+
+  .ver-files {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+  }
+
+  .ver-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 2px 8px;
+    border-radius: 100px;
+    background: var(--accent-warm-dim);
+    color: var(--accent-warm);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+  }
+
+  .ver-notes {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 0.35rem;
+    line-height: 1.5;
+  }
+
+  .ver-arrow {
+    color: var(--accent-warm);
+    font-size: 1.1rem;
+    opacity: 0;
+    transition: opacity 0.2s;
+    flex-shrink: 0;
+  }
+
+  .ver-entry:hover .ver-arrow {
+    opacity: 1;
+  }
+
+  footer {
+    padding: 3rem 0;
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+
+  footer p {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  @media (max-width: 640px) {
+    .container { padding: 0 1.25rem; }
+    .ver-entry { flex-wrap: wrap; gap: 0.75rem; }
+    .ver-badge { min-width: auto; }
+    .ver-arrow { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="../index.html" class="back-link">Back to Journey</a>
+
+  <header class="header">
+    <div class="header-meta">Version archive</div>
+    <h1>Time Capsules</h1>
+    <p>Every release of the journey site, frozen in time. Browse any version to see the project at that moment.</p>
+  </header>
+
+  <div class="versions-list">
+
+    <a href="v0.1.0/" class="ver-entry ver-latest">
+      <div class="ver-badge">v0.1.0</div>
+      <div class="ver-info">
+        <div class="ver-meta">
+          <time datetime="2026-02-21T15:25:42+01:00">February 21, 2026</time>
+          <span class="ver-files">3 pages</span>
+          <span class="ver-tag">latest</span>
+        </div>
+        
+      </div>
+      <span class="ver-arrow">&rarr;</span>
+    </a>
+  </div>
+
+  <footer>
+    <p>Each version is a complete frozen snapshot of the journey site at release time.</p>
+  </footer>
+</div>
+</body>
+</html>
