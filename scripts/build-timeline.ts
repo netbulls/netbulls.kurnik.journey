@@ -79,7 +79,7 @@ async function curateEntries(allChangelogs: string): Promise<string> {
   console.log("🤖 Sending changelogs to Claude for curation...");
 
   const response = await client.messages.create({
-    model: "claude-sonnet-4-5-20250514",
+    model: "claude-sonnet-4-6",
     max_tokens: 4096,
     messages: [
       {
